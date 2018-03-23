@@ -1,12 +1,23 @@
 const locater = document.querySelector("button[name=locater]");
-const submit_loc = document.querySelector("button[name=submit-location]");
+const submitLocate = document.querySelector("button[name=submit-location]");
+const submitField = document.querySelector("input[name=field]");
 
-submit_loc.addEventListener("click", () => {
-   let value = document.querySelector("input[name=field]").value;
+let temp = document.querySelector("#temp");
+
+submitLocate.addEventListener("click", fetchItAll);
+
+submitField.onkeydown = function (e) {
+   if (e.keyCode == 13) {
+      fetchItAll();
+   }
+};
+
+function fetchItAll() {
+   let value = submitField.value;
    let google = `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=${keys.google}`;
    let temp = document.querySelector("#temp");
    let location = document.querySelector("#location");
-   
+
    fetch(google)
       .then(response => {
          if (response.ok) {
@@ -15,14 +26,15 @@ submit_loc.addEventListener("click", () => {
       })
       .then(data => {
          if (data.status === "ZERO_RESULTS") {
-            console.log("Cannot find location. Try a different query");
+            temp.innerHTML = "Cannot find location. Try a different query";
             return;
          }
+         console.log(data);
          let place = data.results["0"].formatted_address;
 
          let latitude = data.results["0"].geometry.location.lat;
          let longitude = data.results["0"].geometry.location.lng;
-         let darksky = `https://api.darksky.net/forecast/${keys.darksky}/${latitude},${longitude}`;
+         let darksky = `https://api.darksky.net/forecast/${keys.darksky}/${latitude},${longitude}?exclude=flags,alerts,minutely`;
 
          fetch(darksky)
             .then(response => {
@@ -33,18 +45,14 @@ submit_loc.addEventListener("click", () => {
             .then(data => {
                console.log(data);
                location.innerHTML = `Weather for ${place}`;
-               temp.innerHTML = `Summary: ${data.daily.summary}<br>
-               Feels like: ${Math.round(data.currently.apparentTemperature)}°F<br>
-               Precipitation: ${data.currently.precipProbability * 100}%<br>
-               Wind: ${data.currently.windSpeed} mph`;
+               handleData(data);
             })
       })
 
    temp.innerHTML = "Obtaining location and weather data...";
-})
+}
 
 locater.addEventListener("click", () => {
-   let temp = document.querySelector("#temp");
    let location = document.querySelector("#location");
 
    if (!navigator.geolocation) {
@@ -68,7 +76,7 @@ locater.addEventListener("click", () => {
          .then(data => {
             console.log(data);
 
-            location.innerHTML = `Weather for ${data.formatted_address}`;
+            location.innerHTML = `Weather for ${data.results[2].formatted_address}`;
          })
 
       // Darksky 
@@ -88,30 +96,22 @@ locater.addEventListener("click", () => {
          })
 
       // temp.innerHTML = `Latitude: ${lat} | Longitude: ${long}`;
-
-      function handleData(data) {
-         temp.innerHTML = `Summary: ${data.daily.summary}<br>
-         Feels like: ${Math.round(data.currently.apparentTemperature)}°F<br>
-         Precipitation: ${data.currently.precipProbability * 100}%<br>
-         Wind: ${data.currently.windSpeed} mph`;
-      }
    }
    function fail(error) {
       let mainmsg = "Something went wrong!<br>";
 
       switch (error.code) {
          case error.PERMISSION_DENIED:
-            // console.log("User denied the request for Geolocation.");
             temp.innerHTML = `${mainmsg}You have denied permissions for Location`;
             break;
          case error.POSITION_UNAVAILABLE:
             console.log("Location information is unavailable.");
 
-            temp.innerHTML = `${mainmsg}Location unavailable`;            
+            temp.innerHTML = `${mainmsg}Location unavailable`;
             break;
          case error.TIMEOUT:
             console.log("The request to get user location timed out.");
-            temp.innerHTML = `${mainmsg}Timed out`;
+            temp.innerHTML = `${mainmsg}Locating took too long`;
             break;
          case error.UNKNOWN_ERROR:
             console.log("An unknown error occurred.");
@@ -126,3 +126,10 @@ locater.addEventListener("click", () => {
    temp.innerHTML = "Obtaining location and weather data...";
    navigator.geolocation.getCurrentPosition(success, fail, options);
 })
+
+function handleData(data) {
+   temp.innerHTML = `Daily Summary: ${data.daily.summary}<br>
+   Feels like: ${Math.round(data.currently.apparentTemperature)}°F<br>
+   Precipitation: ${(data.currently.precipProbability * 100).toFixed(0)}%<br>
+   Wind: ${Math.round(data.currently.windSpeed)} mph`;
+}
