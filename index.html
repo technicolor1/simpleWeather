@@ -44,13 +44,19 @@
       </div>
 
       <div>
-         <input name="field" type="text" placeholder="city / zipcode / place"></input>
+         <input id="pac-input" class="controls" type="text" placeholder="Search Box"/>
          <button name="submit-location"><i class="fas fa-chevron-right"></i></button>
       </div>
    </div>
    <script src="js/vendor/modernizr-3.5.0.min.js"></script>
    <script type='text/javascript' src='js/config.js'></script>
+   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
    <script type='text/javascript' src="js/main.js"></script>
+   <script>
+      new google.maps.places.SearchBox(document.getElementById('pac-input', {
+         types: ["geocode"]
+      }));
+   </script>
 </body>
 
 </html>

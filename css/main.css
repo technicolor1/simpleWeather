@@ -109,7 +109,9 @@ textarea {
    text-align: center;
 }
 
-
+#pac-input {
+   width: 40vh;
+}
 
 
 

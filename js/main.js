@@ -1,6 +1,6 @@
 const locater = document.querySelector("button[name=locater]");
 const submitLocate = document.querySelector("button[name=submit-location]");
-const submitField = document.querySelector("input[name=field]");
+const submitField = document.querySelector("#pac-input");
 
 let temp = document.querySelector("#temp");
 
@@ -10,7 +10,7 @@ submitField.onkeydown = function (e) {
    if (e.keyCode == 13) {
       fetchItAll();
    }
-};
+}
 
 function fetchItAll() {
    let value = submitField.value;
@@ -22,20 +22,40 @@ function fetchItAll() {
       .then(response => {
          if (response.ok) {
             return response.json();
-         }
+         } 
+         return Promise.reject(Object.assign(), response, {
+            status: response.status,
+            statusText: response.statusText
+         })
       })
       .then(data => {
          if (data.status === "ZERO_RESULTS") {
             temp.innerHTML = "Cannot find location. Try a different query";
             return;
          }
-         console.log(data);
-         let place = data.results["0"].formatted_address;
 
-         let latitude = data.results["0"].geometry.location.lat;
-         let longitude = data.results["0"].geometry.location.lng;
+         data.results.forEach(result => {
+            console.log(result.types);
+
+            if (result.types["0"] === "locality" && result.types["1"] === "political") {
+               handleThisData(result);
+            } else if (result.types["0"] === "postal_code") {
+               handleThisData(result);
+            } else {
+               temp.innerHTML = "Try a different search query";
+               return;
+            }
+         })
+      })
+      .catch(error => {
+         console.log(error);
+      })
+
+      function handleThisData(googleData) {
+         let latitude = googleData.geometry.location.lat;
+         let longitude = googleData.geometry.location.lng;
          let darksky = `https://api.darksky.net/forecast/${keys.darksky}/${latitude},${longitude}?exclude=flags,alerts,minutely`;
-
+         
          fetch(darksky)
             .then(response => {
                if (response.ok) {
@@ -44,10 +64,10 @@ function fetchItAll() {
             })
             .then(data => {
                console.log(data);
-               location.innerHTML = `Weather for ${place}`;
-               handleData(data);
+               location.innerHTML = `Weather for ${googleData.formatted_address}`;
+               handleWeatherData(data);
             })
-      })
+      }
 
    temp.innerHTML = "Obtaining location and weather data...";
 }
@@ -63,7 +83,7 @@ locater.addEventListener("click", () => {
    function success(pos) {
       let lat = pos.coords.latitude;
       let long = pos.coords.longitude;
-      let darksky = `https://api.darksky.net/forecast/${keys.darksky}/${lat},${long}`;
+      let darksky = `https://api.darksky.net/forecast/${keys.darksky}/${lat},${long}?exclude=flags,alerts,minutely`;
       let google = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${keys.google}`;
 
       // Reverse geocode
@@ -92,7 +112,11 @@ locater.addEventListener("click", () => {
             })
          })
          .then(data => {
-            handleData(data);
+            console.log(data);
+            handleWeatherData(data);
+         })
+         .catch(error => {
+            console.log(error);
          })
 
       // temp.innerHTML = `Latitude: ${lat} | Longitude: ${long}`;
@@ -127,9 +151,11 @@ locater.addEventListener("click", () => {
    navigator.geolocation.getCurrentPosition(success, fail, options);
 })
 
-function handleData(data) {
-   temp.innerHTML = `Daily Summary: ${data.daily.summary}<br>
+function handleWeatherData(data) {
+   temp.innerHTML = `Daily Summary: ${data.daily.summary}<br><br>
+
+   Right Now<br>
    Feels like: ${Math.round(data.currently.apparentTemperature)}°F<br>
    Precipitation: ${(data.currently.precipProbability * 100).toFixed(0)}%<br>
-   Wind: ${Math.round(data.currently.windSpeed)} mph`;
+   Wind: ${Math.round(data.currently.windSpeed)} mph<br><br>`;
 }
