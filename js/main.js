@@ -12,6 +12,7 @@ submitField.onkeydown = function (e) {
    }
 }
 
+// searchbox
 function fetchItAll() {
    let value = submitField.value;
    let google = `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=${keys.google}`;
@@ -54,8 +55,9 @@ function fetchItAll() {
       function handleThisData(googleData) {
          let latitude = googleData.geometry.location.lat;
          let longitude = googleData.geometry.location.lng;
-         let darksky = `https://api.darksky.net/forecast/${keys.darksky}/${latitude},${longitude}?exclude=flags,alerts,minutely`;
-         
+         let hackerkey = "d08b7c9c09772f23ae66e4ea807e1de7";
+         let darksky = `https://api.darksky.net/forecast/${hackerkey}/${latitude},${longitude}?exclude=flags,alerts,minutely`;
+
          fetch(darksky)
             .then(response => {
                if (response.ok) {
@@ -64,6 +66,9 @@ function fetchItAll() {
             })
             .then(data => {
                console.log(data);
+               // data.hourly.data.forEach(bit => {
+               //    console.log(moment.unix(bit.time).format("MMMM Do h:mm a"));
+               // })
                location.innerHTML = `Weather for ${googleData.formatted_address}`;
                handleWeatherData(data);
             })
@@ -72,6 +77,7 @@ function fetchItAll() {
    temp.innerHTML = "Obtaining location and weather data...";
 }
 
+// geolocate
 locater.addEventListener("click", () => {
    let location = document.querySelector("#location");
 
@@ -156,6 +162,38 @@ function handleWeatherData(data) {
 
    Right Now<br>
    Feels like: ${Math.round(data.currently.apparentTemperature)}°F<br>
-   Precipitation: ${(data.currently.precipProbability * 100).toFixed(0)}%<br>
-   Wind: ${Math.round(data.currently.windSpeed)} mph<br><br>`;
+   Precipitation: ${percent(data.currently.precipProbability)}%<br>
+   Wind: ${Math.round(data.currently.windSpeed)} mph<br><br>
+   
+   ${hourlyData(data.hourly.data)}`;
+
+   function percent(data) {
+      return (data * 100).toFixed(0);
+   }
+
+   // Expected input: hourly data array
+   function hourlyData(data) {
+      let i = 0;
+      let allHourly = ``;
+      // console.log(data);
+      // data.forEach(data => {
+      //    hrcount++;
+      //    allHourly +=`${hrcount} hr from Now<br>
+      //    Will feel like: ${data.apparentTemperature}<br><br>`;
+      // })
+
+      for (let hour of data) {
+         if (i === 13) {
+            break;
+         }
+         if (i === 0) {
+            i++;
+            continue;
+         }
+         allHourly +=`${moment.unix(hour.time).format("MMMM Do h:mm a")}<br>
+         Will feel like: ${hour.apparentTemperature}<br><br>`
+         i++;
+      }
+      return allHourly;
+   }
 }
