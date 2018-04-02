@@ -42,6 +42,8 @@ function fetchItAll() {
                handleThisData(result);
             } else if (result.types["0"] === "postal_code") {
                handleThisData(result);
+            } else if (result.types["0"] === "administrative_area_level_1") {
+               handleThisData(result);
             } else {
                temp.innerHTML = "Try a different search query";
                return;
@@ -163,9 +165,9 @@ function handleWeatherData(data) {
    Right Now<br>
    Feels like: ${Math.round(data.currently.apparentTemperature)}°F<br>
    Precipitation: ${percent(data.currently.precipProbability)}%<br>
-   Wind: ${Math.round(data.currently.windSpeed)} mph<br><br>
+   Wind: ${Math.round(data.currently.windSpeed)} mph<br><br>`
    
-   ${hourlyData(data.hourly.data)}`;
+   hourlyData(data.hourly.data);
 
    function percent(data) {
       return (data * 100).toFixed(0);
@@ -175,25 +177,22 @@ function handleWeatherData(data) {
    function hourlyData(data) {
       let i = 0;
       let allHourly = ``;
-      let divs = document.querySelector(".hourly").childNodes;
+      let allunits = document.querySelectorAll(".unit");
 
-      console.log(divs);
-
-      for (let hour of data) {
-         // stop at 25th hr
-         if (i === 25) {
-            break;
-         }
-         // discard 0th hr
-         if (i === 0) {
-            i++;
-            continue;
-         }
-         allHourly +=`${hour.summary}<br>
-         ${moment.unix(hour.time).format("MMMM Do h:mm a")}<br>
-         Will feel like: ${Math.round(hour.apparentTemperature)}°F<br><br>`
+      allunits.forEach(unit => {
          i++;
-      }
-      return allHourly;
+         let a = moment.unix(data[i].time).format("h a");
+         if (a === "12 am") {
+            unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("MMMM Do")} midnight</h4><br>
+            ${data[i].summary}<br>
+            Will feel like: ${Math.round(data[i].apparentTemperature)}°F<br>
+            Precipitation: ${percent(data[i].precipProbability)}%`;
+            return;
+         }
+         unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("h a")}</h4><br>
+         ${data[i].summary}<br>
+         Will feel like: ${Math.round(data[i].apparentTemperature)}°F<br>
+         Precipitation: ${percent(data[i].precipProbability)}%`;
+      })
    }
 }
