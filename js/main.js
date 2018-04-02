@@ -175,23 +175,23 @@ function handleWeatherData(data) {
    function hourlyData(data) {
       let i = 0;
       let allHourly = ``;
-      // console.log(data);
-      // data.forEach(data => {
-      //    hrcount++;
-      //    allHourly +=`${hrcount} hr from Now<br>
-      //    Will feel like: ${data.apparentTemperature}<br><br>`;
-      // })
+      let divs = document.querySelector(".hourly").childNodes;
+
+      console.log(divs);
 
       for (let hour of data) {
-         if (i === 13) {
+         // stop at 25th hr
+         if (i === 25) {
             break;
          }
+         // discard 0th hr
          if (i === 0) {
             i++;
             continue;
          }
-         allHourly +=`${moment.unix(hour.time).format("MMMM Do h:mm a")}<br>
-         Will feel like: ${hour.apparentTemperature}<br><br>`
+         allHourly +=`${hour.summary}<br>
+         ${moment.unix(hour.time).format("MMMM Do h:mm a")}<br>
+         Will feel like: ${Math.round(hour.apparentTemperature)}°F<br><br>`
          i++;
       }
       return allHourly;
