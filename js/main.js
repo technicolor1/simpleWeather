@@ -160,11 +160,12 @@ locater.addEventListener("click", () => {
 })
 
 function handleWeatherData(data) {
-   temp.innerHTML = `Daily Summary: ${data.daily.summary}<br><br>
+   temp.innerHTML = `${data.daily.summary}<br><br>
 
    Right Now<br>
-   Feels like: ${Math.round(data.currently.apparentTemperature)}°F<br>
-   Precipitation: ${percent(data.currently.precipProbability)}%<br>
+   ${data.currently.summary}<br>
+   ${Math.round(data.currently.apparentTemperature)}°F<br>
+   ${percent(data.currently.precipProbability)}%<br>
    Wind: ${Math.round(data.currently.windSpeed)} mph<br><br>`
    
    hourlyData(data.hourly.data);
@@ -172,6 +173,8 @@ function handleWeatherData(data) {
    function percent(data) {
       return (data * 100).toFixed(0);
    }
+   
+   // Expected input: daily data array
 
    // Expected input: hourly data array
    function hourlyData(data) {
@@ -185,14 +188,14 @@ function handleWeatherData(data) {
          if (a === "12 am") {
             unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("MMMM Do")} midnight</h4><br>
             ${data[i].summary}<br>
-            Will feel like: ${Math.round(data[i].apparentTemperature)}°F<br>
-            Precipitation: ${percent(data[i].precipProbability)}%`;
+            ${Math.round(data[i].apparentTemperature)}°F<br>
+            Chance of rain: ${percent(data[i].precipProbability)}%`;
             return;
          }
          unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("h a")}</h4><br>
          ${data[i].summary}<br>
-         Will feel like: ${Math.round(data[i].apparentTemperature)}°F<br>
-         Precipitation: ${percent(data[i].precipProbability)}%`;
+         ${Math.round(data[i].apparentTemperature)}°F<br>
+         Chance of rain: ${percent(data[i].precipProbability)}%`;
       })
    }
 }

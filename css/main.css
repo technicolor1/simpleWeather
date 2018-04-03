@@ -96,18 +96,25 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+body {
+   display: flex;
+   flex-direction: column;
+   min-height: 100vh;
+}
 .main {
    display: flex;
    align-items: center;
    justify-content: center;
    flex-direction: column;
    height: 100vh;
+   flex: 1;
 }
 
 .main-msg {
    display: inline;
    text-align: center;
    border: 1px solid black;
+   width: 75vw;
 }
 
 #pac-input {
@@ -115,7 +122,7 @@ textarea {
    text-align: center;
 }
 
-.hourly {
+.other {
    white-space: nowrap;
    width: 80vw;
    height: 21vh;
@@ -123,10 +130,10 @@ textarea {
    border: 1px solid blue;
 }
 
-.hourly > * {
+.other > * {
    display: inline-block;
-   width: 20vw;
-   height: 20vh;
+   width: 200px;
+   height: 175px;
    border: 1px solid red;
    text-align: center;
    font-size: 1.3em;
@@ -135,9 +142,14 @@ textarea {
 
 .time {
    margin: 0;
+   margin-top: 5%;
 }
 
-
+.footer {
+   padding: 1rem;
+   text-align: center;
+   background-color: #efefef;
+}
 
 
 

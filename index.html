@@ -27,35 +27,42 @@
         <![endif]-->
 
    <!-- Add your site or application content here -->
-   <div class="main">
+   <div class="main">   
       <div>
          <h1 id="location">Weather</h1>
       </div>
+
+      <div class="controls">
+            <button name="locater">
+               <i class="fas fa-location-arrow"></i>
+            </button>
+            <input id="pac-input" class="controls" type="text" placeholder="Search Box" autofocus="autofocus"/>
+            <button name="submit-location"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
       <div class="main-msg">
          <h2 id="temp">This site uses Location to determine the weather in your area</h2>
       </div>
 
-      <div>
-         <button name="locater">
-            <i class="fas fa-location-arrow"></i>
-         </button>
+      <h2>Hourly</h2>
+      <div class="other">
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
+         <div class='unit'></div>
       </div>
 
-      <div>
-         <h2>Or Search for your city!</h2>
-      </div>
-
-      <div>
-         <input id="pac-input" class="controls" type="text" placeholder="Search Box"/>
-         <button name="submit-location"><i class="fas fa-chevron-right"></i></button>
-      </div>
-
-      <div class="hourly">
-         <div class='unit'></div>
-         <div class='unit'></div>
-         <div class='unit'></div>
-         <div class='unit'></div>
-         <div class='unit'></div>
+      <h2>Daily</h2>
+      <div class="other">
          <div class='unit'></div>
          <div class='unit'></div>
          <div class='unit'></div>
@@ -67,6 +74,9 @@
       </div>
    </div>
 
+   <div class="footer">
+      <i>Powered by Dark Sky. Made with ❤️</i>
+   </div>
    <script src="js/vendor/modernizr-3.5.0.min.js"></script>
    <script type='text/javascript' src='js/config.js'></script>
    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
