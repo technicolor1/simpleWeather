@@ -162,7 +162,7 @@ locater.addEventListener("click", () => {
 function handleWeatherData(data) {
    temp.innerHTML = `${data.daily.summary}<br><br>
    
-   Right Now<br>
+   Right Now<sub>As of ${moment.unix(data.currently.time).format("h:mm a")}</sub><br>
    ${data.currently.summary}<br>
    ${Math.round(data.currently.apparentTemperature)}°F<br>
    ${percent(data.currently.precipProbability)}%<br>
