@@ -100,7 +100,9 @@ body {
    display: flex;
    flex-direction: column;
    min-height: 100vh;
+   font-family: "Jaldi";
 }
+
 .main {
    display: flex;
    align-items: center;
@@ -125,7 +127,7 @@ body {
 .other {
    white-space: nowrap;
    width: 80vw;
-   height: 21vh;
+   height: 22vh;
    overflow-x: scroll;
    border: 1px solid blue;
 }
@@ -133,7 +135,7 @@ body {
 .other > * {
    display: inline-block;
    width: 200px;
-   height: 175px;
+   height: 190px;
    border: 1px solid red;
    text-align: center;
    font-size: 1.3em;

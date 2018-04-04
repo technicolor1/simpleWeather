@@ -161,7 +161,7 @@ locater.addEventListener("click", () => {
 
 function handleWeatherData(data) {
    temp.innerHTML = `${data.daily.summary}<br><br>
-
+   
    Right Now<br>
    ${data.currently.summary}<br>
    ${Math.round(data.currently.apparentTemperature)}°F<br>
@@ -169,33 +169,61 @@ function handleWeatherData(data) {
    Wind: ${Math.round(data.currently.windSpeed)} mph<br><br>`
    
    hourlyData(data.hourly.data);
+   dailyData(data.daily.data);
 
+   
+   // capitalize
+   function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+   }
+   
+   // dec to percent
    function percent(data) {
       return (data * 100).toFixed(0);
    }
    
    // Expected input: daily data array
-
+   function dailyData(data) {
+      let i = 0;
+      let allunits = document.querySelectorAll(".unit-daily");
+      
+      allunits.forEach(unit => {
+         i++;
+         unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("dddd")}</h4><br>
+         ${Math.round(data[i].apparentTemperatureHigh)}°F / ${Math.round(data[i].apparentTemperatureLow)}°F<br>
+         Chance of rain: ${percent(data[i].precipProbability)}%<br>
+         Sunrise: ${moment.unix(data[i].sunriseTime).format("h:mm a")}<br>
+         Sunset: ${moment.unix(data[i].sunsetTime).format("h:mm a")}`;
+      })
+   }
+   
    // Expected input: hourly data array
    function hourlyData(data) {
       let i = 0;
-      let allHourly = ``;
-      let allunits = document.querySelectorAll(".unit");
-
+      let allunits = document.querySelectorAll(".unit-hour");
+      
       allunits.forEach(unit => {
          i++;
          let a = moment.unix(data[i].time).format("h a");
          if (a === "12 am") {
-            unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("MMMM Do")} midnight</h4><br>
+            unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("MMMM Do")} Midnight</h4><br>
             ${data[i].summary}<br>
             ${Math.round(data[i].apparentTemperature)}°F<br>
-            Chance of rain: ${percent(data[i].precipProbability)}%`;
+            ${handlePrecipType(data[i].precipType)}`;
             return;
          }
          unit.innerHTML = `<h4 class="time">${moment.unix(data[i].time).format("h a")}</h4><br>
          ${data[i].summary}<br>
          ${Math.round(data[i].apparentTemperature)}°F<br>
-         Chance of rain: ${percent(data[i].precipProbability)}%`;
+         ${handlePrecipType(data[i].precipType)}`;
       })
+      
+      // Expected input: precip type of data[i]
+      function handlePrecipType(str) {
+         if (typeof str === "undefined") {
+            return "No rain";
+         }
+         return `${capitalize(str)} Chance: ${percent(data[i].precipProbability)}%`;
+      }
    }
 }

@@ -308,7 +308,7 @@
         "wrap-regex": "error",
         "yield-star-spacing": "error",
         "yoda": [
-            "error",
+            "off",
             "always"
         ]
     }
